@@ -1,0 +1,38 @@
+{
+  "name": "@videoprogress/core",
+  "version": "0.1.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    },
+    "./style": "./src/style.ts",
+    "./dist/style/style.css": "./dist/style/style.css",
+    "./dist/style/style.js": "./dist/style/style.js",
+    "./dist/style/index.js": "./dist/style/index.js",
+    "./dist/style": "./dist/style/index.js"
+  },
+  "scripts": {
+    "dev": "npm run clean && cross-env NODE_ENV=development rollup --config rollup.config.mjs --watch",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.mjs",
+    "clean": "rimraf dist"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map"
+  ],
+  "peerDependencies": {
+    "react": ">=17",
+    "clsx": "^2.1.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT"
+}

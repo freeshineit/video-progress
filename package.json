@@ -1,0 +1,36 @@
+{
+  "name": "video-progress-workspace",
+  "version": "0.0.1",
+  "description": "Video progress bar component monorepo",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm run --parallel --filter '*' dev",
+    "dev:progress": "pnpm run --filter @videoprogress/core dev",
+    "dev:react": "pnpm run --filter @site/with-react dev",
+    "build": "pnpm run --filter '*' build",
+    "build:packages": "pnpm run --filter './packages/*' build",
+    "build:sites": "pnpm run --filter './site/*' build",
+    "clean": "pnpm run --parallel --filter '*' clean && rimraf node_modules",
+    "clean:dist": "rimraf 'packages/*/dist' 'site/*/dist'"
+  },
+  "files": [],
+  "keywords": ["video", "progress", "react", "component"],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "cross-env": "^10.1.0",
+    "rimraf": "^6.1.2",
+    "rollup": "^4.59.0",
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.0.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "sass": "^1.80.0",
+    "tslib": "^2.8.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.3"
+  }
+}
