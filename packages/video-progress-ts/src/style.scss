@@ -1,0 +1,256 @@
+/*============================================================================
+ *  VideoProgress — CSS Custom Properties (Theme Tokens)
+ *
+ *  Override any variable on .vp-container or a parent to theme.
+ *============================================================================*/
+
+.vp-container {
+    /* ── Colors ── */
+    --vp-primary: #1890ff;
+    --vp-buffer: #91d5ff;
+    --vp-background: #e0e0e0;
+    --vp-thumb: #1890ff;
+    --vp-thumb-border: #fff;
+
+    /* ── Sizing ── */
+    --vp-height: 6px;
+    --vp-thumb-size: 16px;
+
+    /* ── Tooltip ── */
+    --vp-tooltip-bg: rgba(0, 0, 0, 0.85);
+    --vp-tooltip-color: #fff;
+
+    /* ── Misc ── */
+    --vp-time-color: #999;
+    --vp-focus-ring: rgba(24, 144, 255, 0.45);
+
+    /* ── Layout ── */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 0;
+    box-sizing: border-box;
+    user-select: none;
+    touch-action: none;
+}
+
+/* ==========================================================================
+ *  Track
+ * ========================================================================== */
+
+.vp-track {
+    position: relative;
+    flex: 1;
+    height: var(--vp-height);
+    cursor: pointer;
+    outline: none;
+    border-radius: calc(var(--vp-height) / 2);
+
+    &:focus-visible {
+        box-shadow: 0 0 0 3px var(--vp-focus-ring);
+    }
+}
+
+/* ==========================================================================
+ *  Rail (background)
+ * ========================================================================== */
+
+.vp-rail {
+    position: absolute;
+    inset: 0;
+    background: var(--vp-background);
+    border-radius: inherit;
+}
+
+/* ==========================================================================
+ *  Buffer bar
+ * ========================================================================== */
+
+.vp-buffer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--vp-buffer);
+    border-radius: inherit;
+    pointer-events: none;
+    transition: width 0.2s linear;
+}
+
+/* ==========================================================================
+ *  Played bar
+ * ========================================================================== */
+
+.vp-played {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--vp-primary);
+    border-radius: inherit;
+    pointer-events: none;
+    transition: width 0.1s linear;
+}
+
+/* ==========================================================================
+ *  Thumb (draggable knob)
+ * ========================================================================== */
+
+.vp-thumb {
+    position: absolute;
+    top: 50%;
+    width: var(--vp-thumb-size);
+    height: var(--vp-thumb-size);
+    background: var(--vp-thumb);
+    border: 2px solid var(--vp-thumb-border);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+    cursor: grab;
+    z-index: 2;
+    pointer-events: auto;
+
+    /* Hidden by default, shown on hover/focus/drag */
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+
+    &:active {
+        cursor: grabbing;
+        transform: translate(-50%, -50%) scale(1.2) !important;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Show thumb when hovering the container, or when focused, or when active */
+.vp-container:not(.vp-disabled) {
+    .vp-track:hover .vp-thumb,
+    &.vp-focused .vp-thumb,
+    .vp-track:active .vp-thumb {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* ==========================================================================
+ *  Hover indicator line
+ * ========================================================================== */
+
+.vp-hover-line {
+    position: absolute;
+    top: -6px;
+    bottom: -6px;
+    width: 2px;
+    background: var(--vp-primary);
+    opacity: 0.45;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 1px;
+    transition: opacity 0.12s ease;
+}
+
+/* ==========================================================================
+ *  Tooltip
+ * ========================================================================== */
+
+.vp-tooltip {
+    position: absolute;
+    top: -34px;
+    transform: translateX(-50%);
+    background: var(--vp-tooltip-bg);
+    color: var(--vp-tooltip-color);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+    animation: vp-fade-in 0.15s ease both;
+}
+
+.vp-tooltip-text {
+    font-variant-numeric: tabular-nums;
+}
+
+@keyframes vp-fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ==========================================================================
+ *  Time labels
+ * ========================================================================== */
+
+.vp-time {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--vp-time-color);
+    white-space: nowrap;
+    min-width: 82px;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.vp-time-sep {
+    margin: 0 3px;
+    opacity: 0.5;
+}
+
+/* ==========================================================================
+ *  Disabled
+ * ========================================================================== */
+
+.vp-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    .vp-track {
+        cursor: not-allowed;
+    }
+}
+
+/* ==========================================================================
+ *  Size variants
+ * ========================================================================== */
+
+.vp-sm {
+    --vp-height: 2px;
+    --vp-thumb-size: 10px;
+}
+
+.vp-lg {
+    --vp-height: 10px;
+    --vp-thumb-size: 20px;
+}
+
+/* ==========================================================================
+ *  Dark theme preset
+ *
+ *  Usage: container.classList.add("vp-dark")
+ *  Or override on any ancestor.
+ *========================================================================= */
+
+.vp-dark {
+    --vp-primary: #1890ff;
+    --vp-buffer: rgba(24, 144, 255, 0.25);
+    --vp-background: rgba(255, 255, 255, 0.18);
+    --vp-thumb: #1890ff;
+    --vp-thumb-border: #1a1a2e;
+    --vp-tooltip-bg: rgba(255, 255, 255, 0.92);
+    --vp-tooltip-color: #111;
+    --vp-time-color: rgba(255, 255, 255, 0.6);
+    --vp-focus-ring: rgba(24, 144, 255, 0.55);
+}

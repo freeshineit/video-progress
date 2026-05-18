@@ -1,0 +1,39 @@
+{
+  "name": "videoprogress",
+  "version": "0.1.0",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    },
+    "./dist/style/style.css": "./dist/style/style.css"
+  },
+  "scripts": {
+    "dev": "npm run clean && cross-env NODE_ENV=development rollup --config rollup.config.mjs --watch",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.mjs",
+    "clean": "rimraf dist",
+    "test": "jest --coverage",
+    "test:ci": "jest --coverage --ci"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map"
+  ],
+  "devDependencies": {
+    "@skax/rollup-config": "^1.0.8",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "license": "MIT"
+}

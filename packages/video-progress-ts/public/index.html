@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VideoProgress · Vanilla TS Demo</title>
+    <link rel="stylesheet" href="./style/css.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #f5f7fa;
+        color: #1f2937;
+        line-height: 1.5;
+      }
+      header {
+        padding: 32px 24px 16px;
+        text-align: center;
+        background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+        color: #fff;
+      }
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        font-weight: 600;
+      }
+      header p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 14px;
+      }
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 24px 16px 64px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow:
+          0 1px 2px rgba(0, 0, 0, 0.04),
+          0 4px 12px rgba(0, 0, 0, 0.04);
+      }
+      .card h2 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+      }
+      .card .desc {
+        margin: 0 0 16px;
+        font-size: 13px;
+        color: #6b7280;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      button {
+        appearance: none;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #1f2937;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      button:hover {
+        border-color: #1890ff;
+        color: #1890ff;
+      }
+      button.primary {
+        background: #1890ff;
+        border-color: #1890ff;
+        color: #fff;
+      }
+      button.primary:hover {
+        background: #096dd9;
+        color: #fff;
+      }
+      .log {
+        margin-top: 12px;
+        padding: 8px 12px;
+        background: #f3f4f6;
+        border-radius: 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        color: #4b5563;
+        min-height: 20px;
+        max-height: 120px;
+        overflow-y: auto;
+      }
+      .dark-card {
+        background: #1a1a2e;
+        color: #e5e7eb;
+      }
+      .dark-card h2,
+      .dark-card .desc {
+        color: #e5e7eb;
+      }
+      .dark-card .desc {
+        opacity: 0.7;
+      }
+      video {
+        width: 100%;
+        max-height: 360px;
+        background: #000;
+        border-radius: 8px;
+        display: block;
+      }
+      code {
+        background: #eef2ff;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #4338ca;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>VideoProgress</h1>
+      <p>Vanilla TypeScript demo · loaded from <code>dist/index.umd.js</code></p>
+    </header>
+
+    <main>
+      <!-- Demo 1: Basic with controls -->
+      <section class="card">
+        <h2>1. Basic — programmatic control</h2>
+        <p class="desc">
+          Use <code>currentTime</code> / <code>bufferTime</code> setters to animate progress.
+        </p>
+        <div id="vp-basic"></div>
+        <div class="controls">
+          <button class="primary" id="basic-play">▶ Play</button>
+          <button id="basic-pause">⏸ Pause</button>
+          <button id="basic-reset">Reset</button>
+          <button id="basic-toggle-disabled">Toggle disabled</button>
+        </div>
+        <div class="log" id="basic-log">Ready.</div>
+      </section>
+
+      <!-- Demo 2: Sizes -->
+      <section class="card">
+        <h2>2. Size variants</h2>
+        <p class="desc">Three preset sizes: <code>sm</code>, <code>md</code>, <code>lg</code>.</p>
+        <div id="vp-sm"></div>
+        <div id="vp-md"></div>
+        <div id="vp-lg"></div>
+      </section>
+
+      <!-- Demo 3: Theme -->
+      <section class="card">
+        <h2>3. Custom theme</h2>
+        <p class="desc">CSS custom properties via the <code>theme</code> option.</p>
+        <div id="vp-theme"></div>
+        <div class="controls">
+          <button id="theme-pink">Pink</button>
+          <button id="theme-green">Green</button>
+          <button id="theme-orange">Orange</button>
+        </div>
+      </section>
+
+      <!-- Demo 4: Dark preset -->
+      <section class="card dark-card">
+        <h2>4. Dark preset</h2>
+        <p class="desc">
+          Apply <code>vp-dark</code> via the <code>className</code> option.
+        </p>
+        <div id="vp-dark"></div>
+      </section>
+
+      <!-- Demo 5: Custom formatter -->
+      <section class="card">
+        <h2>5. Custom time formatter</h2>
+        <p class="desc">Render percentage instead of timestamps.</p>
+        <div id="vp-format"></div>
+      </section>
+
+      <!-- Demo 6: Real video integration -->
+      <section class="card">
+        <h2>6. Wired up to a real &lt;video&gt;</h2>
+        <p class="desc">Two-way binding: dragging seeks the video, playback updates the bar.</p>
+        <video
+          id="real-video"
+          src="https://www.w3schools.com/html/mov_bbb.mp4"
+          preload="metadata"
+          playsinline
+        ></video>
+        <div id="vp-real" style="margin-top: 12px"></div>
+        <div class="controls">
+          <button class="primary" id="real-play">▶ Play / Pause</button>
+          <button id="real-mute">🔇 Mute</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./index.umd.js"></script>
+    <script>
+      // The UMD bundle exposes the class as `Videoprogress`
+      // (camelCased from package name "videoprogress").
+      var VideoProgress = window.Videoprogress;
+
+      /* ── Helper: append to a log panel ───────────────────────────────── */
+      function logTo(id, msg) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var line = document.createElement("div");
+        line.textContent = "[" + new Date().toLocaleTimeString() + "] " + msg;
+        el.appendChild(line);
+        el.scrollTop = el.scrollHeight;
+      }
+
+      /* =================================================================
+       * 1. Basic — programmatic control
+       * ================================================================= */
+      (function () {
+        var DURATION = 120;
+        var vp = new VideoProgress({
+          container: "#vp-basic",
+          duration: DURATION,
+          currentTime: 0,
+          bufferTime: 30,
+          ariaLabel: "Basic progress",
+          onSeekStart: function () {
+            logTo("basic-log", "seek start");
+          },
+          onSeek: function (t) {
+            logTo("basic-log", "seek → " + t.toFixed(1) + "s");
+          },
+          onSeekEnd: function (t) {
+            logTo("basic-log", "seek end @ " + t.toFixed(1) + "s");
+          },
+          onHover: function (t) {
+            // throttle log: only at .0 boundaries
+            if (Math.floor(t * 2) % 20 === 0) {
+              logTo("basic-log", "hover → " + t.toFixed(1) + "s");
+            }
+          },
+        });
+
+        var timer = null;
+        function play() {
+          if (timer) return;
+          timer = setInterval(function () {
+            var next = Math.min(vp.currentTime + 0.5, DURATION);
+            vp.currentTime = next;
+            // Simulate buffer always 20s ahead of current time
+            vp.bufferTime = Math.min(next + 20, DURATION);
+            if (next >= DURATION) pause();
+          }, 100);
+        }
+        function pause() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+
+        document.getElementById("basic-play").addEventListener("click", play);
+        document.getElementById("basic-pause").addEventListener("click", pause);
+        document.getElementById("basic-reset").addEventListener("click", function () {
+          pause();
+          vp.currentTime = 0;
+          vp.bufferTime = 30;
+          logTo("basic-log", "reset");
+        });
+        document
+          .getElementById("basic-toggle-disabled")
+          .addEventListener("click", function () {
+            vp.disabled = !vp.disabled;
+            logTo("basic-log", "disabled = " + vp.disabled);
+          });
+      })();
+
+      /* =================================================================
+       * 2. Size variants
+       * ================================================================= */
+      ["sm", "md", "lg"].forEach(function (size) {
+        new VideoProgress({
+          container: "#vp-" + size,
+          size: size,
+          duration: 100,
+          currentTime: size === "sm" ? 20 : size === "md" ? 50 : 80,
+          bufferTime: 90,
+          ariaLabel: "Size " + size,
+        });
+      });
+
+      /* =================================================================
+       * 3. Custom theme
+       * ================================================================= */
+      (function () {
+        var vp = new VideoProgress({
+          container: "#vp-theme",
+          duration: 100,
+          currentTime: 40,
+          bufferTime: 70,
+          theme: {
+            primary: "#eb2f96",
+            buffer: "#ffadd2",
+            thumb: "#eb2f96",
+            height: 8,
+          },
+        });
+
+        function setTheme(primary, buffer) {
+          vp.update({
+            theme: { primary: primary, buffer: buffer, thumb: primary, height: 8 },
+          });
+        }
+        document
+          .getElementById("theme-pink")
+          .addEventListener("click", function () {
+            setTheme("#eb2f96", "#ffadd2");
+          });
+        document
+          .getElementById("theme-green")
+          .addEventListener("click", function () {
+            setTheme("#52c41a", "#b7eb8f");
+          });
+        document
+          .getElementById("theme-orange")
+          .addEventListener("click", function () {
+            setTheme("#fa8c16", "#ffd591");
+          });
+      })();
+
+      /* =================================================================
+       * 4. Dark preset
+       * ================================================================= */
+      new VideoProgress({
+        container: "#vp-dark",
+        className: "vp-dark",
+        duration: 100,
+        currentTime: 35,
+        bufferTime: 80,
+      });
+
+      /* =================================================================
+       * 5. Custom formatter
+       * ================================================================= */
+      new VideoProgress({
+        container: "#vp-format",
+        duration: 100,
+        currentTime: 33,
+        bufferTime: 88,
+        formatTime: function (t) {
+          return Math.round(t) + "%";
+        },
+      });
+
+      /* =================================================================
+       * 6. Real <video> integration
+       * ================================================================= */
+      (function () {
+        var video = document.getElementById("real-video");
+        var vp = new VideoProgress({
+          container: "#vp-real",
+          duration: 0,
+          ariaLabel: "Video timeline",
+          onSeekEnd: function (t) {
+            video.currentTime = t;
+          },
+          onSeek: function (t) {
+            // Show the seek target while dragging
+            video.currentTime = t;
+          },
+        });
+
+        video.addEventListener("loadedmetadata", function () {
+          vp.duration = video.duration || 0;
+        });
+        video.addEventListener("timeupdate", function () {
+          vp.currentTime = video.currentTime;
+        });
+        video.addEventListener("progress", function () {
+          if (video.buffered.length > 0) {
+            vp.bufferTime = video.buffered.end(video.buffered.length - 1);
+          }
+        });
+
+        document.getElementById("real-play").addEventListener("click", function () {
+          if (video.paused) video.play();
+          else video.pause();
+        });
+        document.getElementById("real-mute").addEventListener("click", function () {
+          video.muted = !video.muted;
+        });
+      })();
+    </script>
+  </body>
+</html>
